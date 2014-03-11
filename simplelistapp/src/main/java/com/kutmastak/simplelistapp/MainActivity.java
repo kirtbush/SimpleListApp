@@ -83,7 +83,7 @@ public class MainActivity extends ActionBarActivity  {
             return true;
         }
         else if (id == R.id.new_list_action) {
-            Log.d("onOptionsItemSelected: new_list_action", "Adding a new item to the list view");
+            Log.d("onOptionsItemSelected: new_list_action", "start!");
             final EditText input = new EditText(this);
             AlertDialog.Builder alert = new AlertDialog.Builder(this)
                     .setTitle("New List")
@@ -92,6 +92,9 @@ public class MainActivity extends ActionBarActivity  {
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             Editable value = input.getText();
+                            Log.d("onOptionsItemSelected: new_list_action", "Adding a new item named: "+input.getText().toString());
+                            listViewAdapter.addItem(input.getText().toString(), listDefaultImage);
+                            listViewAdapter.notifyDataSetChanged();
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
