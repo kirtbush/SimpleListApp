@@ -1,11 +1,9 @@
 package com.kutmastak.simplelistapp;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,7 +44,7 @@ public class ListItemAdapter extends BaseAdapter {
     @Override
     public View getView(int index, View view, ViewGroup parent) {
         View rootView = LayoutInflater.from(context)
-                .inflate(R.layout.text_view, parent, false);
+                .inflate(R.layout.main_list_view_item_layout, parent, false);
 
         ImageView itemImageView = (ImageView) rootView.findViewById(R.id.list_item_imageview);
 

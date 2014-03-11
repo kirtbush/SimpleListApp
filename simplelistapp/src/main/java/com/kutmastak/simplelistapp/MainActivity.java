@@ -1,30 +1,20 @@
 package com.kutmastak.simplelistapp;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 
 public class MainActivity extends ActionBarActivity  {
@@ -77,7 +67,7 @@ public class MainActivity extends ActionBarActivity  {
     public boolean onCreateOptionsMenu(Menu menu) {
         
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main_action_bar, menu);
 
 
         return true;
@@ -94,7 +84,21 @@ public class MainActivity extends ActionBarActivity  {
         }
         else if (id == R.id.new_list_action) {
             Log.d("onOptionsItemSelected: new_list_action", "Adding a new item to the list view");
-
+            final EditText input = new EditText(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                    .setTitle("New List")
+                    .setMessage("Choose a name for your list")
+                    .setView(input)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Editable value = input.getText();
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Do nothing.
+                        }
+                    });
+            alert.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
