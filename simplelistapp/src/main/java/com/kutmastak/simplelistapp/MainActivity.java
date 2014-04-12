@@ -1,13 +1,18 @@
 package com.kutmastak.simplelistapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -15,9 +20,11 @@ import android.widget.ListView;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends ActionBarActivity  {
+    final Context context = this;
     public ArrayList<String> myStringArray = new ArrayList<String>();
     //private ArrayAdapter<String> listViewAdapter;
     private ListItemAdapter listViewAdapter;
@@ -25,6 +32,32 @@ public class MainActivity extends ActionBarActivity  {
     private SecureRandom random = new SecureRandom();
     private ListView mainListView;
     public ImageView listDefaultImage;
+
+    private AdapterView.OnItemLongClickListener onItemLongClickListener = new
+            AdapterView.OnItemLongClickListener() {
+        public boolean onItemLongClick(AdapterView<?> parent, View arg1,
+        int pos, long id) {
+
+            Log.d("item clicked", "pos: " + pos);
+            ListView dialogListView;
+            ListItemAdapter dialogAdapter = new ListItemAdapter(context);
+            dialogListView = new ListView(context);
+            dialogListView.setAdapter(dialogAdapter);
+            dialogAdapter.addItem("Meh", listDefaultImage);
+
+
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+
+            alertBuilder.setView(dialogListView);
+            alertBuilder.setTitle("List options:");
+
+            AlertDialog alertDialog = alertBuilder.create();
+
+            alertDialog.show();
+            return true;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,25 +72,12 @@ public class MainActivity extends ActionBarActivity  {
         listViewAdapter = new ListItemAdapter(this);
         mainListView.setAdapter(listViewAdapter);
 
+        //test data
+        listViewAdapter.addItem("Test1", listDefaultImage);
+        listViewAdapter.addItem("Hello!", listDefaultImage);
+        listViewAdapter.addItem("Groceries", listDefaultImage);
 
-
-// Test Items
-//        scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
-//        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-//            public void run() {
-//                runOnUiThread(new Runnable() {
-//                    public void run() {
-//
-//                        String newString = new BigInteger(130, random).toString(32);
-//                        //myStringArray.add(newString);
-//                        listViewAdapter.addItem(newString, listDefaultImage);
-//                        Log.d("TaskExecuter", "Added: " + newString);
-//                        //Log.d("TaskExecuter", "ListView Count: " + ((ListView) findViewById(R.id.main_item_listview)).getCount());
-//                        listViewAdapter.notifyDataSetChanged();
-//                    }
-//                });
-//            }
-//        }, 0, 5, TimeUnit.SECONDS);
+        mainListView.setOnItemLongClickListener(onItemLongClickListener);
     }
 
 
@@ -69,6 +89,10 @@ public class MainActivity extends ActionBarActivity  {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_action_bar, menu);
 
+        AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                .setView(findViewById(R.id.list_popup_menu_view));
+
+        alert.show();
 
         return true;
     }
