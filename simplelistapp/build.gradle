@@ -18,7 +18,6 @@ android {
     }
 }
 dependencies {
-    compile 'com.android.support:gridlayout-v7:18.0.+'
     compile 'com.android.support:gridlayout-v7:19.0.0'
     compile 'com.android.support:appcompat-v7:19.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])

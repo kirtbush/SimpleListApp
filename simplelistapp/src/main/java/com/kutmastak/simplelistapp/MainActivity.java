@@ -3,6 +3,7 @@ package com.kutmastak.simplelistapp;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,29 +23,23 @@ import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.zip.Inflater;
 
-
 public class MainActivity extends ActionBarActivity  {
     final Context context = this;
-    public ArrayList<String> myStringArray = new ArrayList<String>();
-    //private ArrayAdapter<String> listViewAdapter;
     private ListItemAdapter listViewAdapter;
-    private ScheduledExecutorService scheduleTaskExecutor;
-    private SecureRandom random = new SecureRandom();
     private ListView mainListView;
     public ImageView listDefaultImage;
+    public final static String CURRENT_LIST_NAME = "Nonce";
 
     private AdapterView.OnItemLongClickListener onItemLongClickListener = new
             AdapterView.OnItemLongClickListener() {
         public boolean onItemLongClick(AdapterView<?> parent, View arg1,
         int pos, long id) {
-
-            Log.d("item clicked", "pos: " + pos);
+            Log.d("item LONG clicked", "pos: " + pos);
             ListView dialogListView;
             ListItemAdapter dialogAdapter = new ListItemAdapter(context);
             dialogListView = new ListView(context);
             dialogListView.setAdapter(dialogAdapter);
             dialogAdapter.addItem("Meh", listDefaultImage);
-
 
             AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 
@@ -58,13 +53,23 @@ public class MainActivity extends ActionBarActivity  {
         }
     };
 
+    private AdapterView.OnItemClickListener onItemClickListener = new
+        AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                Log.d("item clicked", "pos: " + pos);
+                Intent intent = new Intent(context, ListContentsActivity.class);
+                intent.putExtra(CURRENT_LIST_NAME, listViewAdapter.getItem(pos).getListName());
+                startActivity(intent);
+            }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mainListView = (ListView)findViewById(R.id.main_item_listview);
-        //mainListView = new ListView(this);
+        mainListView = (ListView)findViewById(R.id.main_list_view);
 
         listDefaultImage = new ImageView(this);
         listDefaultImage.setImageResource(R.drawable.ic_launcher);
@@ -77,11 +82,9 @@ public class MainActivity extends ActionBarActivity  {
         listViewAdapter.addItem("Hello!", listDefaultImage);
         listViewAdapter.addItem("Groceries", listDefaultImage);
 
+        mainListView.setOnItemClickListener(onItemClickListener);
         mainListView.setOnItemLongClickListener(onItemLongClickListener);
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
