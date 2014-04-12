@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -29,12 +30,12 @@ public class MainActivity extends ActionBarActivity  {
     private ListView mainListView;
     public ImageView listDefaultImage;
     public final static String CURRENT_LIST_NAME = "Nonce";
-
+    public String listsFromPreferences = "";
     private AdapterView.OnItemLongClickListener onItemLongClickListener = new
             AdapterView.OnItemLongClickListener() {
         public boolean onItemLongClick(AdapterView<?> parent, View arg1,
         int pos, long id) {
-            Log.d("item LONG clicked", "pos: " + pos);
+            Log.w("item LONG clicked", "pos: " + pos);
             ListView dialogListView;
             ListItemAdapter dialogAdapter = new ListItemAdapter(context);
             dialogListView = new ListView(context);
@@ -57,7 +58,7 @@ public class MainActivity extends ActionBarActivity  {
         AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                Log.d("item clicked", "pos: " + pos);
+                Log.w("item clicked", "pos: " + pos);
                 Intent intent = new Intent(context, ListContentsActivity.class);
                 intent.putExtra(CURRENT_LIST_NAME, listViewAdapter.getItem(pos).getListName());
                 startActivity(intent);
@@ -78,9 +79,26 @@ public class MainActivity extends ActionBarActivity  {
         mainListView.setAdapter(listViewAdapter);
 
         //test data
-        listViewAdapter.addItem("Test1", listDefaultImage);
-        listViewAdapter.addItem("Hello!", listDefaultImage);
-        listViewAdapter.addItem("Groceries", listDefaultImage);
+        //listViewAdapter.addItem("Test1", listDefaultImage);
+        //listViewAdapter.addItem("Hello!", listDefaultImage);
+        //listViewAdapter.addItem("Groceries", listDefaultImage);
+
+        listsFromPreferences = getString(R.string.list_preference_string);
+        SharedPreferences sharedPrefs = getSharedPreferences(listsFromPreferences,
+                Context.MODE_PRIVATE);
+
+        String myListsString =  sharedPrefs.getString(listsFromPreferences, "");
+        Log.w("MainActivity Constructing", "myListsString = "+myListsString);
+
+        //now parse the itemString from preferences, separator is semicolon
+        String listNames[] = myListsString.split(";");
+
+        for (int idx = 0; idx < listNames.length; idx ++)
+        {
+            if (listNames[idx].isEmpty()) //this shouldn't happen, but just in case
+                continue;
+            listViewAdapter.addItem(listNames[idx], listDefaultImage);
+        }
 
         mainListView.setOnItemClickListener(onItemClickListener);
         mainListView.setOnItemLongClickListener(onItemLongClickListener);
@@ -92,10 +110,10 @@ public class MainActivity extends ActionBarActivity  {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_action_bar, menu);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this)
-                .setView(findViewById(R.id.list_popup_menu_view));
+//        AlertDialog.Builder alert = new AlertDialog.Builder(this)
+  //              .setView(findViewById(R.id.list_popup_menu_view));
 
-        alert.show();
+    //    alert.show();
 
         return true;
     }
@@ -110,7 +128,7 @@ public class MainActivity extends ActionBarActivity  {
             return true;
         }
         else if (id == R.id.new_list_action) {
-            Log.d("onOptionsItemSelected: new_list_action", "start!");
+            Log.w("onOptionsItemSelected: new_list_action", "start!");
             final EditText input = new EditText(this);
             AlertDialog.Builder alert = new AlertDialog.Builder(this)
                     .setTitle("New List")
@@ -119,9 +137,22 @@ public class MainActivity extends ActionBarActivity  {
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             Editable value = input.getText();
-                            Log.d("onOptionsItemSelected: new_list_action", "Adding a new item named: "+input.getText().toString());
+                            Log.w("onOptionsItemSelected: new_list_action", "Adding a new item named: "+input.getText().toString());
                             listViewAdapter.addItem(input.getText().toString(), listDefaultImage);
                             listViewAdapter.notifyDataSetChanged();
+
+                            //Now save the new list to shared preferences
+                            listsFromPreferences = getString(R.string.list_preference_string);
+                            SharedPreferences sharedPrefs = getSharedPreferences(listsFromPreferences,
+                                    Context.MODE_PRIVATE);
+
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+
+                            editor.putString(listsFromPreferences, sharedPrefs.getString(listsFromPreferences, "") +
+                                    input.getText().toString() + ";");
+                            editor.commit();
+
+
                         }
                     }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {

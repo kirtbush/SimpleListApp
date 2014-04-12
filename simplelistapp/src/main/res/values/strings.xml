@@ -9,5 +9,11 @@
     <string name="delete">delete</string>
     <string name="copy">copy</string>
     <string name="title_activity_list_contents">ListContentsActivity</string>
+    <string name="new_item_action">New Item</string>
+    <string name="delete_item_action">delete</string>
+    <string name="delete_list_action">delete list</string>
+    <string name="preference_file_key">com.kutmastak.simplelistapp.PREFERENCE_FILE_KEY</string>
+    <string name="item_list_item_string">items</string>
+    <string name="list_preference_string">lists</string>
 
 </resources>
